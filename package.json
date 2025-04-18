@@ -1,30 +1,34 @@
 {
-  "name": "unlock-pdf-web",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "start": "bun run build && bunx serve dist",
-    "build": "rsbuild build",
-    "dev": "rsbuild dev",
-    "analyze": "RSDOCTOR=true rsbuild build"
-  },
-  "devDependencies": {
-    "@rsbuild/core": "^1.3.1",
-    "@rsbuild/plugin-node-polyfill": "^1.3.0",
-    "@rsdoctor/rspack-plugin": "^1.0.2",
-    "@tailwindcss/postcss": "^4.1.4",
-    "@types/byte-size": "^8.1.2",
-    "compression-webpack-plugin": "^11.1.0",
-    "tailwindcss": "^4.1.4",
-    "typescript": "^5.8.2"
-  },
-  "dependencies": {
-    "@neslinesli93/qpdf-wasm": "^0.2.0",
-    "byte-size": "^9.0.1",
-    "jszip": "^3.10.1"
-  },
-  "browserslist": [
-    "defaults and fully supports es6-module and fully supports intl-pluralrules and fully supports es6-module-dynamic-import and fully supports wasm"
-  ]
+	"name": "unlock-pdf-web",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"start": "bun run build && bunx serve dist",
+		"build": "rsbuild build",
+		"dev": "rsbuild dev",
+		"analyze": "RSDOCTOR=true rsbuild build",
+		"lint": "biome format --write",
+		"prepare": "lefthook install"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@rsbuild/core": "^1.3.1",
+		"@rsbuild/plugin-node-polyfill": "^1.3.0",
+		"@rsdoctor/rspack-plugin": "^1.0.2",
+		"@tailwindcss/postcss": "^4.1.4",
+		"@types/byte-size": "^8.1.2",
+		"compression-webpack-plugin": "^11.1.0",
+		"lefthook": "^1.11.10",
+		"tailwindcss": "^4.1.4",
+		"typescript": "^5.8.2"
+	},
+	"dependencies": {
+		"@neslinesli93/qpdf-wasm": "^0.2.0",
+		"byte-size": "^9.0.1",
+		"jszip": "^3.10.1"
+	},
+	"browserslist": [
+		"defaults and fully supports es6-module and fully supports intl-pluralrules and fully supports es6-module-dynamic-import and fully supports wasm"
+	]
 }

@@ -1,39 +1,43 @@
-import {defineConfig} from '@rsbuild/core';
-import {pluginNodePolyfill} from '@rsbuild/plugin-node-polyfill';
+import { defineConfig } from "@rsbuild/core";
+import { pluginNodePolyfill } from "@rsbuild/plugin-node-polyfill";
 import CompressionPlugin from "compression-webpack-plugin";
-import {RsdoctorRspackPlugin} from "@rsdoctor/rspack-plugin";
 
 export default defineConfig({
-  performance: {
-    chunkSplit: {
-      strategy: 'all-in-one',
-    },
-  },
-  resolve: {
-    dedupe: [
-      'safe-buffer',
-      'readable-stream',
-      'bn.js',
-      'string_decoder',
-      'buffer',
-    ],
-  },
-  output: {
-    assetPrefix: './',
-    // @ts-ignore
-    publicPath: '/public/',
-    copy: [
-      {from: './node_modules/@neslinesli93/qpdf-wasm/dist/qpdf.wasm', to: './'}
-    ],
-    cleanDistPath: true,
-  },
-  tools: {
-    rspack: {
-      plugins: [new CompressionPlugin({
-        algorithm: "gzip",
-        compressionOptions: {level: 9},
-      })]
-    },
-  },
-  plugins: [pluginNodePolyfill()],
+	performance: {
+		chunkSplit: {
+			strategy: "all-in-one",
+		},
+	},
+	resolve: {
+		dedupe: [
+			"safe-buffer",
+			"readable-stream",
+			"bn.js",
+			"string_decoder",
+			"buffer",
+		],
+	},
+	output: {
+		assetPrefix: "./",
+		// @ts-ignore
+		publicPath: "/public/",
+		copy: [
+			{
+				from: "./node_modules/@neslinesli93/qpdf-wasm/dist/qpdf.wasm",
+				to: "./",
+			},
+		],
+		cleanDistPath: true,
+	},
+	tools: {
+		rspack: {
+			plugins: [
+				new CompressionPlugin({
+					algorithm: "gzip",
+					compressionOptions: { level: 9 },
+				}),
+			],
+		},
+	},
+	plugins: [pluginNodePolyfill()],
 });
