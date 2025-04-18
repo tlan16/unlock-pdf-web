@@ -17,7 +17,8 @@ if (rootEl) {
     <p>Unlock PDF without uploading to server</p>
    <section id="loading-indicator" class="underline">Loading...</section>
    <section id="file-uploader" class="mt-4 hidden">
-    <input type="file" id="file_input" accept="application/pdf" multiple class="border-2 p-3" />
+    <input type="file" id="file_input" accept="application/pdf" multiple class="border-2 p-3 hidden" />
+    <label for="file_input" class="bg-blue-500 text-white p-2 rounded cursor-pointer">Select PDF Files</label>
     </section>
     <section id="file-list" class="mt-4 hidden">
     </section>
@@ -42,7 +43,7 @@ if (rootEl) {
     }
     getLoadingIndicatorElement()?.classList.add("hidden");
     document.querySelector(`section#file-uploader`)?.classList.remove("hidden");
-    getFileUploaderElement()?.addEventListener('change', (event) => onFileSelected(event as InputEvent));
+    getFileUploaderInput()?.addEventListener('change', (event) => onFileSelected(event as InputEvent));
     getDownloadAllButtonElement()?.addEventListener('click', downloadAll);
   });
 }
@@ -93,7 +94,11 @@ async function convertFile(file: File) {
 }
 
 function getFileUploaderElement() {
-  return document.querySelector<HTMLInputElement>(`section#file-uploader input[type="file"]`);
+  return document.querySelector(`section#file-uploader`);
+}
+
+function getFileUploaderInput() {
+  return getFileUploaderElement()?.querySelector(`section#file-uploader input[type="file"]`);
 }
 
 function getFileListElement() {
