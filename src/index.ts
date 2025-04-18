@@ -70,7 +70,7 @@ async function downloadAll() {
 	const zipName = "unlocked_files.zip";
 	convertedFiles.forEach((file) => {
 		if (file.convertedFile) {
-			const fileName = file.originalFile.name.replace(".pdf", "_unlocked.pdf");
+			const fileName = generate_unlocked_file_name(file.originalFile.name);
 			zip.file(fileName, file.convertedFile);
 		}
 	});
@@ -83,6 +83,18 @@ async function downloadAll() {
 	fakeLink.click();
 	URL.revokeObjectURL(url);
 	getDownloadAllButtonElement()?.setHTMLUnsafe("Download All");
+}
+
+function generate_unlocked_file_name(originalFileName: string) {
+	let fileName = originalFileName.replace(/[^a-zA-Z0-9]/g, "_");
+	const suffix = "_unlocked.pdf";
+	if (!fileName.endsWith(suffix)) fileName += suffix;
+	fileName = truncateFromStart(fileName);
+	return fileName;
+}
+
+function truncateFromStart(value: string, maxLength = 100) {
+	return value.length > maxLength ? value.slice(-maxLength) : value;
 }
 
 async function convertFile(file: File) {
@@ -145,7 +157,7 @@ async function onFileSelected(event: InputEvent) {
 				originalFile: file,
 				convertedFile: convertedFile,
 			});
-			resultHtml += `<a href="${convertedFileUrl}" download="${fileName.replace(".pdf", "_unlocked.pdf")}" class="text-blue-500 underline">Download Unlocked</a>`;
+			resultHtml += `<a href="${convertedFileUrl}" download="${generate_unlocked_file_name(fileName)}" class="text-blue-500 underline">Download Unlocked</a>`;
 		} catch (error) {
 			convertedFiles.push({
 				originalFile: file,
