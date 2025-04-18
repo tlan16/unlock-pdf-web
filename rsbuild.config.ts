@@ -3,7 +3,13 @@ import { pluginNodePolyfill } from '@rsbuild/plugin-node-polyfill';
 import CompressionPlugin from "compression-webpack-plugin";
 
 export default defineConfig({
+  performance: {
+    chunkSplit: {
+      strategy: 'split-by-module',
+    },
+  },
   output: {
+    // @ts-ignore
     publicPath: '/public/',
     copy: [
       { from: './public' },

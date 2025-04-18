@@ -1,89 +1,157 @@
 import './index.css';
-import createModule from "@neslinesli93/qpdf-wasm";
+import createModule, {QpdfInstance} from "@neslinesli93/qpdf-wasm";
 
 const rootEl = document.querySelector('#root');
+let qpdfInstance: QpdfInstance | null = null;
+let fileList: FileList | null = null;
+let convertedFiles: ({
+  originalFile: File;
+  convertedFile: null | Awaited<ReturnType<typeof convertFile>>;
+  error?: unknown | undefined;
+}[]) | null = null
+
 if (rootEl) {
   rootEl.innerHTML = `
-  <div class="w-screen h-screen flex flex-col items-center justify-center bg-gray-100">
+  <div class="w-screen h-screen flex flex-col items-center justify-center bg-gray-100 px-10">
     <h1 class="text-3xl font-bold underline">Unlock PDF</h1>
     <p>Unlock PDF without uploading to server</p>
-    <div class="w-md min-h-[10rem] border border-black flex flex-col justify-center" id="drop_zone">
-        <p class="flex justify-center">Drag one or more files to this <i>drop zone</i>.</p>
-      </div>
+   <section id="loading-indicator" class="underline">Loading...</section>
+   <section id="file-uploader" class="mt-4 hidden">
+    <input type="file" id="file_input" accept="application/pdf" multiple class="border-2 p-3" />
+    </section>
+    <section id="file-list" class="mt-4 hidden">
+    </section>
+    <section id="footer" class="mt-4 hidden">
+      <button id="download-all-button" class="bg-blue-500 text-white p-2 rounded hidden">Download All</button>
+      <button id="restart-button" class="bg-gray-300 p-2 rounded" onclick="location.reload()">Restart</button>
+    </section>
   </div>
 `;
 
-  // Attach event handlers after creating the DOM elements
-  const dropZone = document.getElementById('drop_zone');
-  if (dropZone) {
-    dropZone.addEventListener('dragover', dragOverHandler);
-    dropZone.addEventListener('drop', dropHandler);
-  }
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadQpdfWasm();
+    document.querySelector(`section#loading-indicator`)?.classList.add("hidden");
+    document.querySelector(`section#file-uploader`)?.classList.remove("hidden");
+    getFileUploaderElement()?.addEventListener('change', (event) => onFileSelected(event as InputEvent));
+    getDownloadAllButtonElement()?.addEventListener('click', downloadAll);
+  });
 }
 
-function dragOverHandler(event: DragEvent) {
-  event.preventDefault();
-  const dropZone = document.getElementById('drop_zone');
-  if (dropZone) {
-    dropZone.classList.add('bg-gray-200');
+async function downloadAll() {
+  if (!convertedFiles) {
+    getDownloadAllButtonElement()?.setHTMLUnsafe("No converted files to download");
+    return;
   }
+  getDownloadAllButtonElement()?.setHTMLUnsafe("Preparing download...");
+  const {default: JSZip} = await import('jszip');
+
+  const zip = new JSZip();
+  const zipName = 'unlocked_files.zip';
+  convertedFiles.forEach((file) => {
+    if (file.convertedFile) {
+      const fileName = file.originalFile.name.replace('.pdf', '_unlocked.pdf');
+      zip.file(fileName, file.convertedFile);
+    }
+  });
+  const zipFileBlob = await zip.generateAsync({type: 'blob'});
+  const blob = new Blob([zipFileBlob], {type: 'application/zip'});
+  const url = URL.createObjectURL(blob);
+  const fakeLink = document.createElement('a');
+  fakeLink.href = url;
+  fakeLink.download = zipName;
+  fakeLink.click();
+  URL.revokeObjectURL(url);
+  getDownloadAllButtonElement()?.setHTMLUnsafe("Download All");
 }
 
-async function dropHandler(event: DragEvent) {
-  event.preventDefault();
-  const dt = event.dataTransfer;
-  if (dt && dt.items) {
-    const files = dt.items;
-    for (let i = 0; i < files.length; i++) {
-      if (files[i].kind === 'file') {
-        const file = files[i].getAsFile();
-        if (file) {
-          const wasmUrl = "/qpdf.wasm";
-          const qpdf = await createModule({
-            locateFile: () => wasmUrl,
-            noInitialRun: true,
-            preRun: [
-              (module: any) => {
-                // Ensure FS is available
-                if (module.FS) {
-                  try {
-                    module.FS.mkdir(INPUT_FOLDER);
-                    module.FS.mkdir(OUTPUT_FOLDER);
-                  } catch (e) {
-                    console.warn("Error creating directories:", e);
-                  }
-                }
-              },
-            ],
-          });
-          console.log({
-            file,
-            qpdf,
-          });
-          const fileBuffer = await file.arrayBuffer();
-          const uint8Array = new Uint8Array(fileBuffer);
-          const inputPath = "/input_file.pdf";
-          qpdf.FS.writeFile(inputPath, uint8Array);
+async function convertFile(file: File) {
+  const fileBuffer = await file.arrayBuffer();
+  const uint8Array = new Uint8Array(fileBuffer);
+  const inputPath = "/input_file.pdf";
+  const qpdf = await loadQpdfWasm();
+  // @ts-ignore
+  qpdf.FS.writeFile(inputPath, uint8Array);
 
-          // invoke qpdf
-          qpdf.callMain(["/input_file.pdf", "--decrypt", "--", "/output_file.pdf"]);
+  qpdf.callMain(["/input_file.pdf", "--decrypt", "--", "/output_file.pdf"]);
 
-          // read the output file and create a new objectUrl for example
-          const outputFile = qpdf.FS.readFile("/output_file.pdf");
-          const outputFileUrl = URL.createObjectURL(new Blob([outputFile]));
-          console.log({outputFileUrl})
-          const downloadLink = document.createElement('a');
-          downloadLink.href = outputFileUrl;
-          downloadLink.download = "output_file.pdf";
-          downloadLink.textContent = "Download Decrypted PDF";
-          downloadLink.className = "text-blue-500 underline";
-          const dropZone = document.getElementById('drop_zone');
-          if (dropZone) {
-            dropZone.innerHTML = '';
-            dropZone.appendChild(downloadLink);
-          }
-        }
-      }
+  // read the output file and create a new objectUrl for example
+  return qpdf.FS.readFile("/output_file.pdf");
+}
+
+function getFileUploaderElement() {
+  return document.querySelector<HTMLInputElement>(`section#file-uploader input[type="file"]`);
+}
+
+function getFileListElement() {
+  return document.querySelector(`section#file-list`);
+}
+
+function getFooterElement() {
+  return document.querySelector(`section#footer`);
+}
+
+function getDownloadAllButtonElement() {
+  return getFooterElement()?.querySelector(`button#download-all-button`);
+}
+
+async function onFileSelected(event: InputEvent) {
+  const {default: byteSize} = await import('byte-size')
+  fileList = (event.target as HTMLInputElement).files;
+  if (!fileList?.length) return;
+  getFileListElement()?.classList.remove("hidden");
+  getFileUploaderElement()?.classList.add("hidden");
+  let resultHtml = `<div class="grid gap-4 [grid-template-columns:3fr_1fr_1fr]">`;
+  convertedFiles = []
+  for (const index in Array.from(fileList)) {
+    const file = fileList[index];
+    getFileListElement()?.setHTMLUnsafe(`Converting ${toOrdinal(parseInt(index) + 1)} files...`);
+    const fileName = file.name;
+    const fileSize = byteSize(file.size);
+    resultHtml += `<p class="text-lg font-bold underline">${fileName}</p>`
+    resultHtml += `<p class="text-lg">Size: ${fileSize.value} ${fileSize.unit}</p>`
+    try {
+      const convertedFile = await convertFile(file);
+      const convertedFileUrl = URL.createObjectURL(new Blob([convertedFile]))
+      convertedFiles.push({
+        originalFile: file,
+        convertedFile: convertedFile,
+      });
+      resultHtml += `<a href="${convertedFileUrl}" download="${fileName.replace(".pdf", "_unlocked.pdf")}" class="text-blue-500 underline">Download Unlocked</a>`;
+    } catch (error) {
+      convertedFiles.push({
+        originalFile: file,
+        convertedFile: null,
+        error: error,
+      });
+      console.error("Error converting file:", {file, error});
+      resultHtml += `<p class="text-red-500">Error converting file</p>`;
     }
   }
+  resultHtml += `</div>`;
+  if (convertedFiles.filter(({convertedFile}) => Boolean(convertedFile)) .length > 1) {
+    getDownloadAllButtonElement()?.classList.remove("hidden");
+  }
+  getFooterElement()?.classList.remove("hidden");
+  getFileListElement()?.setHTMLUnsafe(resultHtml);
+}
+
+async function loadQpdfWasm(): Promise<QpdfInstance> {
+  if (qpdfInstance) {
+    return qpdfInstance;
+  }
+
+  const wasmUrl = "/qpdf.wasm";
+  qpdfInstance = await createModule({
+    locateFile: () => wasmUrl,
+    // @ts-ignore
+    noInitialRun: true,
+  });
+  return qpdfInstance;
+}
+
+function toOrdinal(n: number) {
+  const pr = new Intl.PluralRules('en-US', {type: 'ordinal'});
+  const suffixes = {one: 'st', two: 'nd', few: 'rd', other: 'th'} as const;
+  const category = pr.select(n) as keyof typeof suffixes;
+  return `${n}${suffixes[category]}`;
 }
