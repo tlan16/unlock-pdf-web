@@ -21,5 +21,8 @@
     "@neslinesli93/qpdf-wasm": "^0.2.0",
     "byte-size": "^9.0.1",
     "jszip": "^3.10.1"
-  }
+  },
+  "browserslist": [
+    "defaults and fully supports es6-module and fully supports intl-pluralrules and fully supports es6-module-dynamic-import and fully supports wasm"
+  ]
 }

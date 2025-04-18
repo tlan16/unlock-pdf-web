@@ -5,7 +5,7 @@ import CompressionPlugin from "compression-webpack-plugin";
 export default defineConfig({
   performance: {
     chunkSplit: {
-      strategy: 'split-by-module',
+      strategy: 'all-in-one',
     },
   },
   output: {

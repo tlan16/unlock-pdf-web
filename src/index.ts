@@ -164,8 +164,14 @@ async function loadQpdfWasm(): Promise<QpdfInstance> {
 }
 
 function toOrdinal(n: number) {
-  const pr = new Intl.PluralRules('en-US', {type: 'ordinal'});
-  const suffixes = {one: 'st', two: 'nd', few: 'rd', other: 'th'} as const;
-  const category = pr.select(n) as keyof typeof suffixes;
-  return `${n}${suffixes[category]}`;
+  try {
+    const pr = new Intl.PluralRules('en-US', {type: 'ordinal'});
+    const suffixes = {one: 'st', two: 'nd', few: 'rd', other: 'th'} as const;
+    const category = pr.select(n) as keyof typeof suffixes;
+    return `${n}${suffixes[category]}`;
+  } catch (error) {
+    console.error("Error getting ordinal:", error);
+    return `${n}th`;
+  }
+
 }
