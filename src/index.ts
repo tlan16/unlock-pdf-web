@@ -29,12 +29,26 @@ if (rootEl) {
 `;
 
   document.addEventListener('DOMContentLoaded', async () => {
-    await loadQpdfWasm();
-    document.querySelector(`section#loading-indicator`)?.classList.add("hidden");
+    try {
+      await loadQpdfWasm();
+    } catch (error) {
+      console.error("Error loading QPDF WASM:", error);
+      getLoadingIndicatorElement()?.classList.remove("underline");
+      getLoadingIndicatorElement()?.setHTMLUnsafe(`
+        <p class="text-red-500 text-xl font-extrabold">Error loading QPDF WASM</p>
+      `)
+      getFileListElement()?.setHTMLUnsafe("Error loading QPDF WASM");
+      return;
+    }
+    getLoadingIndicatorElement()?.classList.add("hidden");
     document.querySelector(`section#file-uploader`)?.classList.remove("hidden");
     getFileUploaderElement()?.addEventListener('change', (event) => onFileSelected(event as InputEvent));
     getDownloadAllButtonElement()?.addEventListener('click', downloadAll);
   });
+}
+
+function getLoadingIndicatorElement() {
+  return document.querySelector(`section#loading-indicator`);
 }
 
 async function downloadAll() {
@@ -140,7 +154,7 @@ async function loadQpdfWasm(): Promise<QpdfInstance> {
     return qpdfInstance;
   }
 
-  const wasmUrl = "/qpdf.wasm";
+  const wasmUrl = "./qpdf.wasm";
   qpdfInstance = await createModule({
     locateFile: () => wasmUrl,
     // @ts-ignore
