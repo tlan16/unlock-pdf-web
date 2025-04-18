@@ -9,10 +9,11 @@ export default defineConfig({
     },
   },
   output: {
+    assetPrefix: './',
     // @ts-ignore
     publicPath: '/public/',
     copy: [
-      { from: './public' },
+      { from: './node_modules/@neslinesli93/qpdf-wasm/dist/qpdf.wasm', to: './' }
     ],
     cleanDistPath: true,
   },
