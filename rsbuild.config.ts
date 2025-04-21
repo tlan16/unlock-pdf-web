@@ -39,5 +39,20 @@ export default defineConfig({
 			],
 		},
 	},
+	html: {
+		title: "PDF Unlocker",
+		favicon: "./src/assets/favicon.svg",
+		appIcon: {
+			name: "My Website",
+			icons: [
+				{ src: "./src/assets/favicon-192.png", size: 192 },
+				{ src: "./src/assets/favicon-512.png", size: 512 },
+			],
+		},
+		meta: {
+			description:
+				"Unlock your PDF files with ease using our online PDF unlocker tool. Remove password protection and restrictions from your PDF documents quickly and securely.",
+		},
+	},
 	plugins: [pluginNodePolyfill()],
 });
