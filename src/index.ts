@@ -14,8 +14,8 @@ let convertedFiles:
 
 if (rootEl) {
 	rootEl.innerHTML = `
-  <div class="w-screen h-screen flex flex-col items-center justify-center bg-gray-100 px-10">
-    <h1>Unlock PDF</h1>
+  <div class="w-screen h-screen flex flex-col items-center justify-center bg-gray-100 sm:px-10 px-2">
+    <h1 class="sm:text-6xl text-4xl whitespace-nowrap">Unlock PDF</h1>
     <p>Unlock PDF without uploading to server</p>
    <section id="loading-indicator" class="underline">Loading...</section>
    <section id="file-uploader" class="mt-4 hidden">
