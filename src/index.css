@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@theme {
+    --breakpoint-xs: 10rem;
+    --breakpoint-2xs: 14rem;
+}
+
 h1 {
     position: relative;
     background-image: linear-gradient(

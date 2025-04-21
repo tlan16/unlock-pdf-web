@@ -14,13 +14,13 @@ let convertedFiles:
 
 if (rootEl) {
 	rootEl.innerHTML = `
-  <div class="w-screen h-screen flex flex-col items-center justify-center bg-gray-100 sm:px-10 px-2">
-    <h1 class="sm:text-6xl text-4xl whitespace-nowrap">Unlock PDF</h1>
+  <div class="w-screen h-screen flex flex-col items-center justify-center bg-gray-100 2xs:px-10 px-2 text-center">
+    <h1 class="sm:text-6xl text-4xl 2xs:whitespace-nowrap">Unlock PDF</h1>
     <p>Unlock PDF without uploading to server</p>
    <section id="loading-indicator" class="underline">Loading...</section>
    <section id="file-uploader" class="mt-4 hidden">
     <input type="file" id="file_input" accept="application/pdf" multiple class="border-2 p-3 hidden" />
-    <label for="file_input" class="bg-blue-500 text-white p-2 rounded cursor-pointer">Select PDF Files</label>
+    <label for="file_input" class="bg-blue-500 text-white p-2 rounded cursor-pointer 2xs:whitespace-nowrap">Select<span class="hidden xs:inline"> PDF Files</span></label>
     </section>
     <section id="file-list" class="mt-4 hidden">
     </section>
