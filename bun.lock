@@ -4,7 +4,7 @@
     "": {
       "name": "unlock-pdf-web",
       "dependencies": {
-        "@neslinesli93/qpdf-wasm": "^0.2.0",
+        "@neslinesli93/qpdf-wasm": "^0.3.0",
         "byte-size": "^9.0.1",
         "jszip": "^3.10.1",
       },
@@ -73,7 +73,7 @@
 
     "@module-federation/webpack-bundler-runtime": ["@module-federation/webpack-bundler-runtime@0.11.2", "", { "dependencies": { "@module-federation/runtime": "0.11.2", "@module-federation/sdk": "0.11.2" } }, "sha512-WdwIE6QF+MKs/PdVu0cKPETF743JB9PZ62/qf7Uo3gU4fjsUMc37RnbJZ/qB60EaHHfjwp1v6NnhZw1r4eVsnw=="],
 
-    "@neslinesli93/qpdf-wasm": ["@neslinesli93/qpdf-wasm@0.2.0", "", {}, "sha512-V5PTF9u+ZuypZDQqrnwerOKD3YQyQ090VzXrSouui2f2N0JIl2/V7aOv7/b9N24Tb5S4nVFlRMHhe5SEpke/Gw=="],
+    "@neslinesli93/qpdf-wasm": ["@neslinesli93/qpdf-wasm@0.3.0", "", {}, "sha512-ObyTmabopTMwN6AGwrEkmDbdmM5wnwlRdn9jnJYQ2KbBUPdPDcfNf1QkcWFOVD+qIgSqILz9nK51e22T+x+gkQ=="],
 
     "@polka/url": ["@polka/url@1.0.0-next.29", "", {}, "sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww=="],
 
