@@ -21,7 +21,7 @@
 		"compression-webpack-plugin": "^11.1.0",
 		"lefthook": "^1.11.10",
 		"tailwindcss": "^4.1.4",
-		"typescript": "^5.8.2"
+		"typescript": "^6.0.0"
 	},
 	"dependencies": {
 		"@neslinesli93/qpdf-wasm": "^0.2.0",
