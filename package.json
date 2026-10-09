@@ -19,7 +19,7 @@
 		"@tailwindcss/postcss": "^4.1.4",
 		"@types/byte-size": "^8.1.2",
 		"compression-webpack-plugin": "^11.1.0",
-		"lefthook": "^1.11.10",
+		"lefthook": "^2.0.0",
 		"tailwindcss": "^4.1.4",
 		"typescript": "^5.8.2"
 	},
